@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.h"
+#include "DLine.h"
 
 enum ShapeType
 {
@@ -13,18 +13,16 @@ enum ShapeType
 enum DrawState
 {
 	IDLE = 0,
-	LIN,
-	REC,
-	FREC,
-	CIRC
+	ACTIVE
 };
 
 class Menu
 {
 public:
 	static void init();
+	static void terminate();
 
-	static void updateInput(sf::Event &event, const sf::Vector2i &mousePos);
+	static void updateInput(sf::Event &event, const sf::Vector2i &mousePos, sf::Window *window);
 	static void update(const float &deltaTime, const sf::Vector2i &mousePos);
 	static void render(sf::RenderTarget *target);	
 
@@ -39,13 +37,12 @@ private:
 	static sf::Text circleText;
 	static sf::Text screenshotText;
 	static sf::Text readFileText;
+	static sf::Text exitText;
 	static sf::VertexArray *lowerLine;
 	static sf::VertexArray *colorPanel1;
 	static sf::VertexArray *colorPanel2;
 
-	static std::list<sf::RectangleShape *> rects;
-	static std::list<sf::CircleShape *> circles;
-	static std::list<sf::VertexArray *> lines;
+	static std::list<DShape *> shapes;
 	static sf::Color outlineColor;
 	static sf::Color fillColor;
 };

@@ -8,6 +8,7 @@ Program::Program()
 
 Program::~Program()
 {
+    Menu::terminate();
 	if(this->window)
 		delete this->window;
 }
@@ -35,7 +36,7 @@ void Program::updateSFMLEvents()
     		this->window->close();
         if(this->event.type == sf::Event::EventType::KeyPressed and this->event.key.code == sf::Keyboard::Key::Escape)
             this->window->close();
-        Menu::updateInput(this->event, sf::Mouse::getPosition(*this->window));
+        Menu::updateInput(this->event, sf::Mouse::getPosition(*this->window), this->window);
     }
 }
 
