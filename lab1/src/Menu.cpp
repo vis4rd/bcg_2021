@@ -10,6 +10,8 @@ sf::Text Menu::circleText = sf::Text();
 sf::Text Menu::screenshotText = sf::Text();
 sf::Text Menu::readFileText = sf::Text();
 sf::VertexArray *Menu::lowerLine = nullptr;
+sf::VertexArray *Menu::colorPanel1 = nullptr;
+sf::VertexArray *Menu::colorPanel2 = nullptr;
 std::list<sf::RectangleShape *> Menu::rects = {};
 std::list<sf::CircleShape *> Menu::circles = {};
 std::list<sf::VertexArray *> Menu::lines = {};
@@ -59,13 +61,168 @@ void Menu::init()
 	Menu::screenshotText.setPosition(sf::Vector2f(250.f, 430.f));
 	Menu::readFileText.setPosition(sf::Vector2f(250.f, 450.f));
 
-	Menu::lowerLine = new sf::VertexArray(sf::Lines, 2);
+	Menu::lowerLine = new sf::VertexArray(sf::Lines);
 	sf::Vertex temp;
 	temp.color = color;
 	temp.position = sf::Vector2f(0.f, 405.f);
 	Menu::lowerLine->append(temp);
 	temp.position = sf::Vector2f(640.f, 405.f);
 	Menu::lowerLine->append(temp);
+
+	int red, green, blue;
+	int *big, *mid, *small;
+	int winX = 640;
+	int part = 640* (2.f/3.f);
+	Menu::colorPanel1 = new sf::VertexArray(sf::Points); //rect winXx30
+	for(int i = 0; i <= winX; i++)
+	{
+		for(int j = 0; j <= 30; j++)
+		{
+			if(i < part)
+			{
+				red = 255 * ((float)i / part);
+				green = 255 * ((float)(part - i) / part);
+				blue = 0;
+			}
+			else
+			{
+				red = 255 * ((float)((winX - part) - (part - i)) / (winX - part));
+				green = 0;
+				blue = 255 * ((float)(i - part) / (winX - part) * 2.f);
+			}
+			
+
+			if(red > green)
+			{
+				if(red > blue)
+				{
+					big = &red;
+					if(green > blue)
+					{
+						mid = &green;
+						small = &blue;
+					}//rgb
+					else
+					{
+						mid = &blue;
+						small = &green;
+					}//rbg
+				}
+				else
+				{
+					big = &blue;
+					mid = &red;
+					small = &green;
+				}//brg
+			}
+			else
+			{
+				if(green > blue)
+				{
+					big = &green;
+					if(blue > red)
+					{
+						mid = &blue;
+						small = &red;
+					}//gbr
+					else
+					{
+						mid = &red;
+						small = &blue;
+					}//grb
+				}
+				else
+				{
+					big = &blue;
+					mid = &green;
+					small = &red;
+				}//bgr
+			}
+
+			*small *= ((float)255/(*big));
+			*mid *= ((float)255/(*big));
+			*big = 255;
+
+			temp.color = sf::Color(red, green, blue);
+			temp.position = sf::Vector2f(float(i),float(j));
+			Menu::colorPanel1->append(temp);
+		}
+	}
+	
+	Menu::colorPanel2 = new sf::VertexArray(sf::Points);
+	for(int i = 0; i <= winX; i++)
+	{
+		for(int j = 0; j <= 30; j++)
+		{
+			if(i < part)
+			{
+				red = 0;
+				green = 255 * ((float)(part - i) / part);
+				blue = 255 * ((float)i / part);
+			}
+			else
+			{
+				red = 255 * ((float)(i - part) / (winX - part) * 2.f);
+				green = 0;
+				blue = 255 * ((float)((winX - part) - (part - i)) / (winX - part));
+			}
+
+			if(red > green)
+			{
+				if(red > blue)
+				{
+					big = &red;
+					if(green > blue)
+					{
+						mid = &green;
+						small = &blue;
+					}//rgb
+					else
+					{
+						mid = &blue;
+						small = &green;
+					}//rbg
+				}
+				else
+				{
+					big = &blue;
+					mid = &red;
+					small = &green;
+				}//brg
+			}
+			else
+			{
+				if(green > blue)
+				{
+					big = &green;
+					if(blue > red)
+					{
+						mid = &blue;
+						small = &red;
+					}//gbr
+					else
+					{
+						mid = &red;
+						small = &blue;
+					}//grb
+				}
+				else
+				{
+					big = &blue;
+					mid = &green;
+					small = &red;
+				}//bgr
+			}
+
+			*small *= ((float)255/(*big));
+			*mid *= ((float)255/(*big));
+			*big = 255;
+
+			temp.color = sf::Color(red, green, blue);
+			temp.position = sf::Vector2f(float(i),float(j+30));
+			Menu::colorPanel2->append(temp);
+		}
+	}
 }
 
 void Menu::updateInput(sf::Event &event, const sf::Vector2i &mousePos)
@@ -101,7 +258,34 @@ void Menu::updateInput(sf::Event &event, const sf::Vector2i &mousePos)
 	}
 	if(event.type == sf::Event::EventType::MouseButtonPressed and event.mouseButton.button == sf::Mouse::Button::Left)
 	{
-	
+		if(mousePos.y < 30)//wybor koloru 1
+		{
+			for(int i = 0; i <= Menu::colorPanel1->getVertexCount(); i++)
+			{
+				if((*Menu::colorPanel1)[i].position.x == mousePos.x)
+				{
+					Menu::fillColor = (*Menu::colorPanel1)[i].color;
+					break;
+				}
+			}
+			printf("Wybrano kolor1 (%d, %d, %d)\n", Menu::fillColor.r, Menu::fillColor.g, Menu::fillColor.b);
+		}
+		else if(mousePos.y < 60)//wybor koloru 2
+		{
+			for(int i = 0; i <= Menu::colorPanel1->getVertexCount(); i++)
+			{
+				if((*Menu::colorPanel2)[i].position.x == mousePos.x)
+				{
+					Menu::outlineColor = (*Menu::colorPanel2)[i].color;
+					break;
+				}
+			}
+			printf("Wybrano kolor2 (%d, %d, %d)\n", Menu::outlineColor.r, Menu::outlineColor.g, Menu::outlineColor.b);
+		}
+		else//rysowanie
+		{
+
+		}
 	}
 }//method
 
@@ -119,6 +303,8 @@ void Menu::render(sf::RenderTarget *target)
 	target->draw(Menu::screenshotText);
 	target->draw(Menu::readFileText);
 	target->draw(*Menu::lowerLine);
+	target->draw(*Menu::colorPanel1);
+	target->draw(*Menu::colorPanel2);
 
 	for(auto &i : Menu::rects)
 		target->draw(*i);

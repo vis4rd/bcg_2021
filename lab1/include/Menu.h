@@ -40,6 +40,8 @@ private:
 	static sf::Text screenshotText;
 	static sf::Text readFileText;
 	static sf::VertexArray *lowerLine;
+	static sf::VertexArray *colorPanel1;
+	static sf::VertexArray *colorPanel2;
 
 	static std::list<sf::RectangleShape *> rects;
 	static std::list<sf::CircleShape *> circles;

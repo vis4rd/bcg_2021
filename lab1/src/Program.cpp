@@ -10,8 +10,6 @@ Program::~Program()
 {
 	if(this->window)
 		delete this->window;
-
-    std::cout <<"Ending Application" << std::endl;
 }
 
 
