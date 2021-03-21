@@ -10,12 +10,16 @@ sf::Text Menu::circleText = sf::Text();
 sf::Text Menu::screenshotText = sf::Text();
 sf::Text Menu::readFileText = sf::Text();
 sf::Text Menu::exitText = sf::Text();
+sf::Text Menu::foreText = sf::Text();
+sf::Text Menu::backText = sf::Text();
 sf::VertexArray *Menu::lowerLine = nullptr;
 sf::VertexArray *Menu::colorPanel1 = nullptr;
 sf::VertexArray *Menu::colorPanel2 = nullptr;
 std::list<DShape *> Menu::shapes = {};
 sf::Color Menu::outlineColor = sf::Color::Red;
-sf::Color Menu::fillColor = sf::Color::Transparent;
+sf::Color Menu::fillColor = sf::Color::White;
+sf::Texture Menu::tb = sf::Texture();
+sf::Sprite Menu::background = sf::Sprite();
 
 void Menu::init()
 {
@@ -32,6 +36,8 @@ void Menu::init()
 	Menu::screenshotText.setFont(*Menu::font);
 	Menu::readFileText.setFont(*Menu::font);
 	Menu::exitText.setFont(*Menu::font);
+	Menu::foreText.setFont(*Menu::font);
+	Menu::backText.setFont(*Menu::font);
 
 	Menu::lineText.setCharacterSize(size);
 	Menu::rectText.setCharacterSize(size);
@@ -40,6 +46,8 @@ void Menu::init()
 	Menu::screenshotText.setCharacterSize(size);
 	Menu::readFileText.setCharacterSize(size);
 	Menu::exitText.setCharacterSize(size);
+	Menu::foreText.setCharacterSize(size);
+	Menu::backText.setCharacterSize(size);
 
 	Menu::lineText.setFillColor(color);
 	Menu::rectText.setFillColor(color);
@@ -48,6 +56,8 @@ void Menu::init()
 	Menu::screenshotText.setFillColor(color);
 	Menu::readFileText.setFillColor(color);
 	Menu::exitText.setFillColor(color);
+	Menu::foreText.setFillColor(color);
+	Menu::backText.setFillColor(color);
 
 	Menu::lineText.setString("<L> Linia");
 	Menu::rectText.setString("<R> Prostokat");
@@ -56,27 +66,31 @@ void Menu::init()
 	Menu::screenshotText.setString("<W> Zapis Do Pliku");
 	Menu::readFileText.setString("<O> Wczytanie Z Pliku");
 	Menu::exitText.setString("<Esc> Wyjscie");
+	Menu::foreText.setString("<LPM> Wybor Koloru");
+	Menu::backText.setString("<LPM> Wybor Tla");
 
-	Menu::lineText.setPosition(sf::Vector2f(30.f, 410.f));
-	Menu::rectText.setPosition(sf::Vector2f(30.f, 430.f));
-	Menu::filledRectText.setPosition(sf::Vector2f(30.f, 450.f));
-	Menu::circleText.setPosition(sf::Vector2f(250.f, 410.f));
-	Menu::screenshotText.setPosition(sf::Vector2f(250.f, 430.f));
-	Menu::readFileText.setPosition(sf::Vector2f(250.f, 450.f));
-	Menu::exitText.setPosition(sf::Vector2f(470.f, 410.f));
+	Menu::lineText.setPosition(sf::Vector2f(30.f, 505.f));
+	Menu::rectText.setPosition(sf::Vector2f(30.f, 525.f));
+	Menu::filledRectText.setPosition(sf::Vector2f(30.f, 545.f));
+	Menu::circleText.setPosition(sf::Vector2f(30.f, 565.f));
+	Menu::screenshotText.setPosition(sf::Vector2f(250.f, 505.f));
+	Menu::readFileText.setPosition(sf::Vector2f(250.f, 525.f));
+	Menu::foreText.setPosition(sf::Vector2f(250.f, 545.f));
+	Menu::backText.setPosition(sf::Vector2f(250.f, 565.f));
+	Menu::exitText.setPosition(sf::Vector2f(470.f, 505.f));
 
 	Menu::lowerLine = new sf::VertexArray(sf::Lines);
 	sf::Vertex temp;
 	temp.color = color;
-	temp.position = sf::Vector2f(0.f, 405.f);
+	temp.position = sf::Vector2f(0.f, 500.f);
 	Menu::lowerLine->append(temp);
-	temp.position = sf::Vector2f(640.f, 405.f);
+	temp.position = sf::Vector2f(800.f, 500.f);
 	Menu::lowerLine->append(temp);
 
 	int red, green, blue;
 	int *big, *mid, *small;
-	int winX = 640;
-	int part = 640* (2.f/3.f);
+	int winX = 800;
+	int part = 800* (2.f/3.f);
 	Menu::colorPanel1 = new sf::VertexArray(sf::Points); //rect winXx30
 	for(int i = 0; i <= winX; i++)
 	{
@@ -288,13 +302,17 @@ void Menu::updateInput(sf::Event &event, const sf::Vector2i &mousePos, sf::Windo
     {
     	//screenshot	
     	sf::Texture screenshot;
-    	screenshot.create(640, 480);
+    	screenshot.create(800, 600);
     	screenshot.update(*window);
     	sf::Image output = screenshot.copyToImage();
     	output.saveToFile("screenshot.png");
     }
     if(event.type == sf::Event::EventType::KeyPressed and event.key.code == sf::Keyboard::Key::O)
 	{
+		Menu::tb.loadFromFile("screenshot.png");
+		Menu::background.setTexture(Menu::tb, true);
+		Menu::background.setTextureRect(sf::IntRect(0, 60, 800, 440));
+		Menu::background.setPosition(sf::Vector2f(0.f, 60.f));
 		//wczytanie z pliku	
 	}
 	if(event.type == sf::Event::EventType::MouseButtonPressed and event.mouseButton.button == sf::Mouse::Button::Left)
@@ -336,7 +354,7 @@ void Menu::updateInput(sf::Event &event, const sf::Vector2i &mousePos, sf::Windo
 			if(Menu::state == DrawState::IDLE)//postawienie figury
 			{
 				if(Menu::shapeChoice == ShapeType::LINE)
-					Menu::shapes.emplace_back(new DLine(sf::Vector2f(mousePos.x, mousePos.y), Menu::outlineColor));
+					Menu::shapes.emplace_back(new DLine(sf::Vector2f(mousePos.x, mousePos.y), Menu::outlineColor, Menu::fillColor));
 				if(Menu::shapeChoice == ShapeType::RECT)
 					Menu::shapes.emplace_back(new DRect(sf::Vector2f(mousePos.x, mousePos.y), Menu::outlineColor));
 				if(Menu::shapeChoice == ShapeType::FRECT)
@@ -349,6 +367,15 @@ void Menu::updateInput(sf::Event &event, const sf::Vector2i &mousePos, sf::Windo
 				Menu::state = DrawState::IDLE;
 		}
 	}
+	if(event.type == sf::Event::EventType::KeyPressed and event.key.code == sf::Keyboard::Key::Z and event.key.control)
+	{
+		if(!Menu::shapes.empty())
+		{
+			delete Menu::shapes.back();
+			Menu::shapes.pop_back();
+		}
+	}
+
 }//method
 
 void Menu::update(const float &deltaTime, const sf::Vector2i &mousePos)
@@ -370,6 +397,8 @@ void Menu::update(const float &deltaTime, const sf::Vector2i &mousePos)
 
 void Menu::render(sf::RenderTarget *target)
 {
+	target->draw(Menu::background);
+
 	for(auto &i : Menu::shapes)
 		i->render(target);
 
@@ -380,6 +409,8 @@ void Menu::render(sf::RenderTarget *target)
 	target->draw(Menu::screenshotText);
 	target->draw(Menu::readFileText);
 	target->draw(Menu::exitText);
+	target->draw(Menu::foreText);
+	target->draw(Menu::backText);
 	target->draw(*Menu::lowerLine);
 	target->draw(*Menu::colorPanel1);
 	target->draw(*Menu::colorPanel2);

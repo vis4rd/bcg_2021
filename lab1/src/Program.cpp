@@ -16,7 +16,7 @@ Program::~Program()
 
 void Program::initWindow()
 {
-    sf::VideoMode window_bounds(640, 480);
+    sf::VideoMode window_bounds(800, 600);
 
     this->window = new sf::RenderWindow(window_bounds, "GFK Lab1", sf::Style::Close | sf::Style::Titlebar);
     this->window->setFramerateLimit(30);

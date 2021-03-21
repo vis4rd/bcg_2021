@@ -12,7 +12,7 @@ public:
 		this->shape.setSize(sf::Vector2f(1.f, 1.f));
 		this->shape.setFillColor(fillColor);
 		this->shape.setOutlineColor(outlineColor);
-		this->shape.setOutlineThickness(-4.f);
+		this->shape.setOutlineThickness(-1.f);
 	}
 	~DRect(){}
 

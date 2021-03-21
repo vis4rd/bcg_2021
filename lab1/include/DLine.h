@@ -5,7 +5,7 @@
 class DLine : public DShape
 {
 public:
-	DLine(sf::Vector2f pos, sf::Color outlineColor = sf::Color::White)
+	DLine(sf::Vector2f pos, sf::Color outlineColor, sf::Color fillColor)
 	: DShape(pos, outlineColor, sf::Color::Transparent)
 	{
 		this->shape.setPrimitiveType(sf::Lines);
@@ -13,6 +13,7 @@ public:
 		temp.position = pos;
 		temp.color = outlineColor;
 		this->shape.append(temp);
+		temp.color = fillColor;
 		this->shape.append(temp);
 	}
 	~DLine(){}

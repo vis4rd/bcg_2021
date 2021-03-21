@@ -38,9 +38,13 @@ private:
 	static sf::Text screenshotText;
 	static sf::Text readFileText;
 	static sf::Text exitText;
+	static sf::Text foreText;
+	static sf::Text backText;
 	static sf::VertexArray *lowerLine;
 	static sf::VertexArray *colorPanel1;
 	static sf::VertexArray *colorPanel2;
+	static sf::Texture tb;
+	static sf::Sprite background;
 
 	static std::list<DShape *> shapes;
 	static sf::Color outlineColor;

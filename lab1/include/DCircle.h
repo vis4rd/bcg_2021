@@ -13,7 +13,7 @@ public:
 		this->shape.setOrigin(sf::Vector2f(0.5f, 0.5f));
 		this->shape.setFillColor(fillColor);
 		this->shape.setOutlineColor(outlineColor);
-		this->shape.setOutlineThickness(-4.f);
+		this->shape.setOutlineThickness(-1.f);
 	}
 	~DCircle(){}
 
