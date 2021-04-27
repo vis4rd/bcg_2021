@@ -25,10 +25,10 @@ GUIMyFrame1::GUIMyFrame1( wxWindow* parent )
 :
 MyFrame1( parent )
 {
- m_button_load_geometry->SetLabel(_("Wczytaj Geometri\u0119"));
- m_staticText25->SetLabel(_("Obr\u00F3t X:"));
- m_staticText27->SetLabel(_("Obr\u00F3t Y:"));
- m_staticText29->SetLabel(_("Obr\u00F3t Z:"));
+ m_button_load_geometry->SetLabel(_("Wczytaj Geometrie"));
+ m_staticText25->SetLabel(_("Obrot X:"));
+ m_staticText27->SetLabel(_("Obrot Y:"));
+ m_staticText29->SetLabel(_("Obrot Z:"));
 
  WxSB_TranslationX->SetRange(0, 200); WxSB_TranslationX->SetValue(100);
  WxSB_TranslationY->SetRange(0, 200); WxSB_TranslationY->SetValue(100);
@@ -167,9 +167,16 @@ void GUIMyFrame1::Repaint()
 
     //rysowanie 
     myBuff.SetPen(wxPen(wxColour(it.color.R, it.color.G, it.color.B)));
-    myBuff.DrawLine((width/2.0) + ((width/2.0)*v1.GetX() / std::abs(1.0 + (v1.GetZ() / 2.0))),
-                    (height/2.0) + ((height/2.0)*v1.GetY() / std::abs(1.0 + (v1.GetZ() / 2.0))),
-                    (width/2.0) + ((width/2.0)*v2.GetX() / std::abs(1.0 + (v2.GetZ() / 2.0))),
-                    (height/2.0) + ((height/2.0)*v2.GetY() / std::abs(1.0 + (v2.GetZ() / 2.0))));
+    //wysrodkowanie obiektu na ekranie
+    //
+    //dzielenie przez |z|, poniewaz plaszczyzna na ktora rzutowany jest obraz 3D
+    //ma fov = 90 (i jest to nasz ekran), czyli ta bardzo skomplikowana macierz z wykladu str 17 
+    //w wielu miejscach zeruje wartosci
+    //
+    //de facto potrzebne nam sa tylko wysokosc i szerokosc okna w ktorym rysujemy
+    myBuff.DrawLine((width/2.0) + ((width/2.0)*v1.GetX() / std::abs(1.0 + (v1.GetZ() / 2.0))),   //x1
+                    (height/2.0) + ((height/2.0)*v1.GetY() / std::abs(1.0 + (v1.GetZ() / 2.0))), //y1
+                    (width/2.0) + ((width/2.0)*v2.GetX() / std::abs(1.0 + (v2.GetZ() / 2.0))),   //x2
+                    (height/2.0) + ((height/2.0)*v2.GetY() / std::abs(1.0 + (v2.GetZ() / 2.0))));//y2
   }
 }
